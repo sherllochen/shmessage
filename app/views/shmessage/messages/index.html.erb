@@ -1,0 +1,55 @@
+<div class="col-16 col-md-16 col-lg-16">
+  <div class="card">
+    <div class="card-header filter-bar">
+      <% if policy(Shmessage::Message).new? %>
+        <%= link_to shmessage.new_message_path, {class: 'ivu-btn ivu-btn-primary', target: '_blank'} do %>
+          <i class="ivu-icon ivu-icon-md-add"></i>
+        <% end %>
+      <% end %>
+    </div>
+
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-striped table-md">
+          <tbody>
+          <tr>
+            <th>Title</th>
+            <th>Updated</th>
+            <th>Has Read</th>
+            <% if policy(Shmessage::Message).update? || policy(Shmessage::Message).destroy? || policy(Shmessage::Message).read? %>
+              <th>Operation</th>
+            <% end %>
+
+          </tr>
+          <% @messages.each do |message| %>
+            <tr>
+              <td><%= message.title %></td>
+              <td><%= message.updated_at.strftime('%Y-%m-%d %H:%M:%S') %></td>
+              <td><%= message.has_read_by?(current_user) ? 'Yes' : '' %></td>
+              <td>
+                <% if policy(Shmessage::Message).update? %>
+                  <%= link_to shmessage.edit_message_path(message), {class: 'btn btn-icon btn-primary', target: '_blank'} do %>
+                    <i class="far fa-edit"></i>
+                  <% end %>
+                <% end %>
+                <% if policy(Shmessage::Message).destroy? %>
+                  <%= link_to shmessage.message_path(message), {class: 'btn btn-icon btn-danger', method: :delete, data: {confirm: 'Confirm to Delete?'}} do %>
+                    <i class="fas fa-times"></i>
+                  <% end %>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <%= paginate @messages %>
+  </div>
+</div>
+
+<%# content_for :additional_js do %>
+<%#= javascript_pack_tag 'messages_index' %>
+<%# end %>
+
+
